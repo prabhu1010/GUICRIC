@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+	<title> One Day Cricket </title>
+	<link rel=“stylesheet” href=“odicric.css">
+</head>
+<style>
+	@font-face { font-family:'scoreboard';	 src: url('scoreboard.ttf');}
+	
+	body {
+		background-color: #000;
+		font-family: "scoreboard";
+		//font-family: "Courier";
+		
+		margin: 4% 2% 4% 2%;
+	}
+
+	table.tableClass { 
+			border-spacing: 0px; 
+			border-collapse:collapse; #internal TDs have adjacent borders
+			border: 1px solid #d9d9d9; 
+			color: #0f0;
+			/* 
+			background-color: 
+			border-color:  
+			*/
+	}
+
+tr, th .headingClass { 
+	border-collapse:collapse;
+	border-style: none;
+}
+
+
+td {
+	padding: 3px 2px 3px 2px;
+	border: 1px solid #d9d9d9;
+	border-collapse: collapse;
+	font-size:14px;
+}
+td.firstCol {	width: 9%;  }
+td.howOut   {	width: 17%;  }
+td.RunBallCol  {   width: 2%; }
+td.fourSixCol  {  width: 1%; } 
+td.sr_col 	   {  width: 3%; }
+td.midRUNS     { width: 4%; font-size:14px;}
+td.midOVS     { width: 4%;}
+td.midRR     { width: 4%;}
+td.midGap     { width: 1%;}
+td.midstriker { width: 7%; }
+td.midnonstriker { width: 7%; }
+td.midteamheader { width: 14%;}
+td.blank { width=180px;}
+
+
+/* NOTE: leftpad + name + howout + R + B + 4 + 6 + SR = 2 + 9 + 18 + 2 + 2 + 2 + 2 + 5 = 42%. 42 x 2 = 84. Fit midCol in 16% */
+
+</style>
+<body>
+
+
+	<table class=tableClass>
+		<tr>
+			<td class=firstCol rowspan=2>AUSTRALIA<td class=howOut rowspan=1><td class=RunBallCol>R<td class=RunBallCol>B<td class=fourSixCol>4<td class=fourSixCol>6<td class=sr_col>SR
+			<td rowspan=2 colspan=5>INDIA
+			<td class=firstCol rowspan=2>INDIA<td class=howOut rowspan=1><td class=RunBallCol>R<td class=RunBallCol>B<td class=fourSixCol>4<td class=fourSixCol>6<td class=sr_col>SR
+			
+		</tr>
+		
+		<tr><td colspan=6>&nbsp;<td colspan=6></tr>
+		<tr><td>KALUWITHARANA<td>c JAYASURIYA b KALUWITHARANA<td>146<td>144<td>10<td>10<td>178.56
+			<td class=midRUNS>RUNS<td class=midGap><td class=midOVS>overs<td class=midGap><td class=midRR>RR
+			<td>GANGULY<td>c MCDERMOTT b GILLESPIE<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>SLATER<td>C GANGULY B SRINATH<td>34<td>40<td>5<td>1<td>90.56<td rowspan=2>148/4<td rowspan=2><td rowspan=2>31.2<td rowspan=2><td rowspan=2>4.72<td>Tendulkar<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>PONTING<td>howout<td>34<td>40<td>5<td>1<td>90.56<td>DRAVID<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>HUSSEY<td>howout<td>34<td>40<td>5<td>1<td>90.56<td colspan=3><td colspan=2><td>MANJREKAR<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>WAUGH<td>howout<td>34<td>40<td>5<td>1<td>90.56<td colspan=3>RAHANE<td colspan=2>DHONI<td>AZHAR<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>BEVAN<td>howout<td>34<td>40<td>5<td>1<td>90.56<td rowspan=2 colspan=3>27(49)<td rowspan=2 colspan=2>24(25)<td>JADEJA<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>HEALY<td>howout<td>34<td>40<td>5<td>1<td>90.56<td>ROBIN<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>McDERMOTT<td>howout<td>34<td>40<td>5<td>1<td>90.56<td colspan=3>2x4<td colspan=2>2x4 1x6<td>MONGIA<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>WARNE<td>howout<td>34<td>40<td>5<td>1<td>90.56<td rowspan=2 colspan=5>&nbsp;<td>KUMBLE<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>GILLESPIE<td>howout<td>34<td>40<td>5<td>1<td>90.56<td>SRINATH<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>McGRATH<td>howout<td>34<td>40<td>5<td>1<td>90.56<td colspan=4>RUNS REQD<td>181<td>PRASAD<td>howout<td>34<td>40<td>5<td>1<td>90.56</tr>
+		<tr><td>ExTRAS<td>lb 10, nb 5<td>18<td colspan=3>RR<td>6.56<td colspan=4>OVERS LEFT<td>15.4<td>ExTRAS<td>lb 10, nb 5<td>18<td colspan=2>&nbsp;<td>RR<td>6.56</tr>
+		<tr><td>TOTAL<td>FOR 9 WKTS<td>287<td colspan=3>OVS<td>50.0<td colspan=4>REQD RATE<td>7.56<td>TOTAL<td>lb 10, nb 5<td>18<td colspan=2>&nbsp;<td>RR<td>6.56</tr>
+	</table>
+	
+	
+	
+	<p>
+	<table class=tableClass>
+		<tr><td>INDIA BOWLING<td>O<td>M<td>R<td>W<td width=400>&nbsp;<td>AUS BOWLING<td>O<td>M<td>R<td>W</tr>
+		<tr><td>SHAMI<td>10<td>0<td>68<td>0<td width=400>&nbsp;<td>STARC<td>5<td>0<td>16<td>0</tr>
+		<tr><td>YADAV<td>10<td>0<td>55<td>0<td width=400>&nbsp;<td>JOHNSON<td>5<td>0<td>16<td>0</tr>
+		<tr><td>SHARMA<td>10<td>0<td>55<td>1<td width=400>&nbsp;<td>WARNE<td>10<td>0<td>36<td>0</tr>
+		<tr><td>JADEJA<td>10<td>0<td>55<td>2<td width=400>&nbsp;<td>WARNE<td>10<td>0<td>36<td>0</tr>
+		<tr><td>ASHWIN<td>10<td>0<td>55<td>3<td width=400>&nbsp;<td>MAXWELL<td>10<td>0<td>36<td>0</tr>
+	</table>
+	
+</body>
+</html>

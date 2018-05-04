@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+<script>
+	function foo(obj) {
+		
+		if (obj.innerHTML == "hide") {
+			$("table").hide();
+			obj.innerHTML = "show";
+			return;
+		}
+		if (obj.innerHTML == "show") {
+			$("table").show();
+			obj.innerHTML = "hide";
+			return;
+		}
+	}
+</script>
+
+
+<button onclick='foo(this);'>hide</button>
+<p>
+<table border=1>
+	<tr>
+		<td>cell<td>cell<td>cell<td>cell
+	</tr>
+	<tr>
+		<td>cell<td>cell<td>cell<td>cell
+	</tr>
+	<tr>
+		<td>cell<td>cell<td>cell<td>cell
+	</tr>
+	
+</table>
+
+
+</body>
+</html>

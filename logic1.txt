@@ -1,0 +1,81 @@
+Logic of cricsim
+btr1, btr2  => str, nstr
+blr1, blr2  => blr, nblr
+
+RepeatBall  : nb, w
+NoDramaBall : lb, b, Run { 1,2,3,4,5,6 }
+DotBall		: dismissal { b, lbw, c&b, c k, st k, c f, runout }
+
+inn1_over = inn2_over = match_over = 0
+
+
+PlayInnings(arg)
+{
+	if (arg == 1)
+		while (inn_over == 0)
+		{
+		if Ball == 0
+			is_maiden=1
+		outcome
+		if (nb)                        #RepeatBall
+			nb ++
+			extra++
+			str_face ++
+			is_maiden=0
+
+		else if (wide)					#RepeatBall
+			wide ++
+			extra ++
+			is_maiden=1
+		else if (Dot or Run or lb or b)		#Nodrama Ball
+			str_face ++
+			team_face ++ ===> ball = 6, then Over ++, ball = 0
+			blr_sent ++ ===> ball = 6, then Over ++, ball = 0
+			
+			if (run)
+				is_maiden=0
+				str_run += run
+				score += run
+				blr_given += run
+				if (oddRun)
+					swap(str, nstr)
+				
+			if (lb or b)
+				is_maiden=0
+				score ++
+				blr_given ++
+				lb ++ (or b++)
+				extra++
+				swap(str, nstr)
+
+		else if (wicket) {				#Dismissal
+				notout ---> howOut
+				wLost ++
+				str = wLost + 1
+				if (!runOut)
+					blr -> wTaken ++
+			}
+
+
+		#Checks for New Phase 
+		if (endOfOver)
+			if (is_maiden == 1)
+				blr_maiden ++
+			swap( str, nstr)
+			swap( blr, nblr)
+			
+		Last :
+		if (Score2 > Score 1) 
+			match_over 
+			winner = team2
+		else if (wkts == 10  || Overs == 50)
+			if (inn1)
+				inn1_over
+			else	
+				match_over
+				if (score1 > score2)
+					winner = team1
+				else
+					tie
+		}
+}
