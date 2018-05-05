@@ -1,0 +1,55 @@
+	@font-face { font-family:'scoreboard';	 src: url('scoreboard.ttf');}
+	
+	body {
+		background-color: #000;
+		//font-family: "scoreboard";
+		font-family: "consolas"; //Looks really great
+		text-transform: uppercase;
+		
+		margin: 4% 2% 4% 2%;
+	}
+
+	table.tableClass { 
+			border-spacing: 0px; 
+			border-collapse:collapse; #internal TDs have adjacent borders
+			border: 1px solid #d9d9d9; 
+			color: #ffff00;
+			/* 
+			background-color: 
+			border-color:  
+			*/
+	}
+
+	tr, th .headingClass { 
+		border-collapse:collapse;
+		border-style: none;
+	}
+
+
+	td {
+		padding: 0px 1px 0px 1px;
+		border: 1px solid #d9d9d9;
+		border-collapse: collapse;
+		font-size:18px;
+		text-align:center;
+		font-weight: bold;
+		text-transform: uppercase;
+		
+	}
+
+	td.mCell { color:#1B9CFC; font-size:1 em;}
+	td.mCell.battingTeam { font-size: 2.5em; }
+	td.partner { width: 9%; background-color:#00d; color:#32ff7e; }
+	td.reverseVdo { background-color:#32ff7e; color: #000;}
+
+	td.firstCol {	width: 9%;  }
+	td.howOut   {	width: 17%;  }
+	td.RunBallCol  {   width: 2%; }
+	td.fourSixCol  {  width: 1%; } 
+	td.sr_col 	   {  width: 3%; }
+
+	.scoreBigFont {
+		font-size: 31px;
+		text-weight:bold;
+	}
+/* NOTE: leftpad + name + howout + R + B + 4 + 6 + SR = 2 + 9 + 18 + 2 + 2 + 2 + 2 + 5 = 42%. 42 x 2 = 84. Fit midCol in 16% */
