@@ -1,0 +1,67 @@
+	/* sim 50 ovs - good code */
+	var total = 0;
+	var iter = 0;
+	var wickets = 0;
+	while (iter <= 300) {
+		iter = iter + 1;
+		val = getRan(0, 9);
+		if (val = 9)
+			wickets++;
+		if (val >=5 )
+			val = 0;
+		total += val;
+	}
+	console.log(total + "-" + wickets);
+--------------------------------------------------------------------
+  //myBody = document.getElementsByTagName("body")[0];
+  td_array = document.getElementsByTagName("table")[0].getElementsByTagName("tr")[2].getElementsByTagName("td");
+  //alert(td_array[0].innerHTML); //first batter  - WORKS 
+  
+  rowPtr = document.getElementsByTagName("tr");
+  rowPtr[2].getElementsByTagName("td")[1].innerHTML = "run out";  //--WORKS
+  //myP.style.background = "rgb(255,0,0)";
+--------------------------------------------------------------------
+	idx1 = 1;
+	idx2 = 2;
+	r1 = r2 = tot = wkt = 0;
+	skr = idx1;
+	ovs = 0;
+	var timer;
+	function doInning() {
+		ovs++;
+		val = getRan(0, 9);
+		console.log(val);
+		if (val == 0) {
+			wkt++;
+			if (skr == idx1) {
+				//console.log(r1);
+				idx1 = idx1 + 2;
+				skr = idx1;
+			}
+			else {
+				console.log(r2);
+				skr = wkt + 2;
+				skr = idx2;
+			}
+		}
+		else {
+			if (skr == idx1)
+				r1 = r1 + val;
+			else	
+				r2 = r2 + val;
+			/*
+			document.getElementById(id1).innerHTML = idx1;
+			document.getElementById(idr1).innerHTML = r1;
+			document.getElementById(id2).innerHTML = idx2;
+			document.getElementById(idr2).innerHTML = r2;
+			
+		}
+			
+		console.log("Overs - " +ovs);
+		ovs++;
+		if (ovs > 50)
+			clearInterval(timer);
+	}
+	
+	timer = setInterval(doInning, 1000);
+	

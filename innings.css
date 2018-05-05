@@ -1,0 +1,10 @@
+table, tr, td {
+	font-family: Arial;
+    font-size: 13px;
+    border : 1px solid #f00; 
+    min-width : 45px;
+    min-height: 50px;
+    text-align: center;
+    border : 1px solid #f00; 
+    border-collapse: collapse;
+}

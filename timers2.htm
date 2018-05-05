@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<head>
+	<title> Timers </title>
+</head>
+<style>
+	body {
+		background-color: #000;
+		//font-family: "scoreboard";
+		font-family: "Courier";
+		
+		margin: 4% 2% 4% 2%;
+	}
+
+	table.tableClass { 
+			border-spacing: 0px; 
+			border-collapse:collapse; #internal TDs have adjacent borders
+			border: 1px solid #d9d9d9; 
+			color: #0f0;
+	}
+
+    tr, th .headingClass { 
+        border-collapse:collapse;
+        border-style: none;
+    }
+
+    td {
+        padding: 3px 2px 3px 2px;
+        border: 1px solid #d9d9d9;
+        border-collapse: collapse;
+        font-size:14px;
+        height: 5%;
+        min-width: 70px;
+        min-height:45px;
+        color:#fff;
+    }
+
+</style>
+<body>
+<table>
+	<tr>
+		<td id=chip><td id=dale>
+	</tr>
+</table>
+
+
+	<table border=1> 
+		<tr><td><td></tr>
+		<tr><td><td></tr>
+		<tr><td rowspan=2><td></tr>
+	</table>
+
+		
+  //myBody = document.getElementsByTagName("body")[0];
+  td_array = document.getElementsByTagName("table")[0].getElementsByTagName("tr")[2].getElementsByTagName("td");
+  //alert(td_array[0].innerHTML); //first batter  - WORKS 
+  
+  rowPtr = document.getElementsByTagName("tr");
+  rowPtr[2].getElementsByTagName("td")[1].innerHTML = "run out";  //--WORKS
+  //myP.style.background = "rgb(255,0,0)";
+	
+<script>
+	function getRan(start, end) {
+		return start + Math.floor(Math.random() * end);
+	}
+	
+	
+	td_ref1 = document.getElementById('chip');
+	td_ref2 = document.getElementById('dale');
+	td_ref1.innerHTML = td_ref2.innerHTML = parseInt(0,10);
+	
+	
+	function Adder() {
+		val = getRan(0,9);
+		td_ref1.innerHTML = parseInt(td_ref1.innerHTML, 10) + val;
+		val = getRan(0,9);
+		td_ref2.innerHTML = parseInt(td_ref2.innerHTML, 10) + val;
+		
+	}
+	timer = setInterval(Adder, 1000);
+	/*Another good one */
+	
+	/*
+	idx1 = 1;
+	idx2 = 2;
+	r1 = r2 = tot = wkt = 0;
+	skr = idx1;
+	ovs = 0;
+	var timer;
+	function doInning() {
+		ovs++;
+		val = getRan(0, 9);
+		console.log(val);
+		if (val == 0) {
+			wkt++;
+			if (skr == idx1) {
+				//console.log(r1);
+				idx1 = idx1 + 2;
+				skr = idx1;
+			}
+			else {
+				console.log(r2);
+				skr = wkt + 2;
+				skr = idx2;
+			}
+		}
+		else {
+			if (skr == idx1)
+				r1 = r1 + val;
+			else	
+				r2 = r2 + val;
+			/*
+			document.getElementById(id1).innerHTML = idx1;
+			document.getElementById(idr1).innerHTML = r1;
+			document.getElementById(id2).innerHTML = idx2;
+			document.getElementById(idr2).innerHTML = r2;
+			
+		}
+			
+		console.log("Overs - " +ovs);
+		ovs++;
+		if (ovs > 50)
+			clearInterval(timer);
+	}
+	
+	timer = setInterval(doInning, 1000);
+	*/
+
+	/* sim 50 ovs - good code */
+	var total = 0;
+	var iter = 0;
+	var zeroes = 0;
+	while (iter <= 300) {
+		iter = iter + 1;
+		val = getRan(0, 9);
+		if (val = 9)
+			zeroes++;
+		if (val >=5 )
+			val = 0;
+		total += val;
+	}
+	console.log(total + "-" + zeroes);
+	
+</script>
+</body>
+</html>
