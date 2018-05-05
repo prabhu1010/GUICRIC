@@ -1,0 +1,566 @@
+File : DEV_READ_ME.txt
+------------------------------------------------------------------------------
+LIST OF FILES AND THEIR PURPOSES IN THIS PROJECT:
+
+4 PHP files: home, tournament, functions, variables
+2 CSS files: home, tournament
+1 JS file: tournament
+
+home.php - This is the home page. Uses home.css and its action target file is tournament.php
+home.css -
+tournament.php - tournament.php uses tournament.css and tournament.js. Includes functions.php
+tensim.css - 
+functions.php - uses variables.php 
+variables.php - the globals, variables, etc etc
+
+abcYYYY.data - is the data file for each tournament-decade
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+To Do:
+1. Verify if ~/BRILLIANCE/1234/CODE/tensim has the latest and greatest data for
+women.
+2. Add the data from Grandslams 2015 for both Men and Women
+3. Add header and footer on top and bottom always to get publicity
+4. Install some cool ass fonts for both windows and Linux  
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+Commands used to verify this:
+grep "\.[a-z]{2,3}" home.php and so on(replace filename for grepping)
+------------------------------------------------------------------------------
+File : dress.php
+------------------------------------------------------------------------------
+<html>
+<head>
+<title>List Box Form Data</title>
+</head>
+<body>
+<h3>List Box Form Data</h3>
+
+<select name="sometext">
+<option>&nbsp;</option>
+<option>red</option>
+<option>blue</option>
+<option>green</option>
+<option>beige</option>
+<option>brown</option>
+</select>
+?>
+  </body>
+  </html>
+------------------------------------------------------------------------------
+File : functions.php
+------------------------------------------------------------------------------
+<?php 					 /* Here is the master file. We are just going to see some functions here */
+	include 'variables.php';
+
+function getNameWithRating() {
+	global $playerInput, $dataFile;
+
+	$fptr = fopen($dataFile, "r");
+	for ($i = 0; $strline = fgets($fptr); $i++) { //Format: Pete Sampras, 850
+			$playerInfo = explode(",", $strline);
+			$playerInput[$i]['Name'] = $playerInfo[0];
+			$playerInput[$i]['LBScore'] = trim($playerInfo[1],"\n");
+			$playerInput[$i]['Rank'] = $i + 1; 
+	}
+	//echo "playerInp array<br>";
+	//	print_r($playerInput);
+	fclose($fptr);
+}
+
+function makeFixtures() {
+	global $match, $drawRow, $playerInput, $lineNumber;
+
+	$drawRow[0] = $playerInput[0]['Rank'] - 1;
+	$drawRow[127] = $playerInput[1]['Rank'] - 1;
+
+		$startIdx = 0; 
+		$endIdx = 1; 
+
+		for ($i = 1; $i <= 7; $i++) {
+			$setLength = $lineNumber[$endIdx] - $lineNumber[$startIdx] + 1; //set length of 2
+
+			for ($j = 0; $j < $setLength; $j++) {  //Shuffle up 33, 96 row, StartIdx are 0..4...10...16...
+				$temp = $lineNumber[$startIdx + $j + 2];  
+				$rndIdx = rand() % $setLength; //randomly choose 0 or 1.
+				$lineNumber[$startIdx + $j + 2] = $lineNumber[$startIdx + $rndIdx + 2];
+				$lineNumber[$startIdx + $rndIdx + 2] = $temp;
+			}
+
+			$seedStart = $lineNumber[$startIdx] - 1; //Fill for seeds 2 to 3
+			$seedEnd  = $lineNumber[$endIdx] - 1;
+
+			$jump = 2;
+			while ($seedStart <= $seedEnd) {
+				$lineIdx = $lineNumber[$startIdx + $jump] - 1; //Got 32
+				$drawRow[$lineIdx] = $playerInput[$seedStart]['Rank'] - 1;
+				$seedStart++; $jump++;
+			}
+
+			$startIdx = $endIdx + $setLength + 1;
+			$endIdx = $startIdx + 1;
+		}   
+		//echo "drawRow has<br>";
+		//print_r($drawRow);
+
+		for ($i = 0 ; $i < 127; $i++) {
+			if ($i < 64) {
+					$idx_1 = $drawRow[2*$i] < $drawRow[2*$i+1] ? $drawRow[2*$i] :$drawRow[2*$i+1];
+					$idx_2 = $idx_1 == $drawRow[2*$i] ? $drawRow[2*$i+1] : $drawRow[2*$i];
+			}
+
+					$match[$i]['Player1'] = $i < 64 ? $playerInput[$idx_1]['Name'] : "" ;
+					$match[$i]['LBScore1'] = $i < 64 ? $playerInput[$idx_1]['LBScore'] : 0 ;
+					$match[$i]['Rank1'] = $i < 64 ? $playerInput[$idx_1]['Rank'] : 0 ;
+
+					$match[$i]['Player2'] = $i < 64 ? $playerInput[$idx_2]['Name'] : "" ;
+					$match[$i]['LBScore2'] = $i < 64 ? $playerInput[$idx_2]['LBScore']: 0 ;
+					$match[$i]['Rank2'] = $i < 64 ? $playerInput[$idx_2]['Rank'] : 0 ;
+		}
+}
+
+function playMatch($matchNum) {
+	global $match, $nextMatchIdx, $playerInput;
+	//print_r($match);
+	$contest = array(
+				array("Name" => $match[$matchNum]['Player1'], "Rank" => $match[$matchNum]['Rank1'], "LBScore" => $match[$matchNum]['LBScore1'], "Max" =>65, "pointsWon" => 0, "gamesWon" => array(0,0,0,0,0), 
+					  "TBWon" => array(0,0,0,0,0),"sWon" => 0 ,"pRun" => 0,"pointsOnServe" => 0,"pointsOnServeWon" => 0,"gRun" => 0,"bptOpp" => 0, "bptsConverted" => 0,"hasAdv" => 0),
+				array("Name" => $match[$matchNum]['Player2'], "Rank" => $match[$matchNum]['Rank2'], "LBScore" => $match[$matchNum]['LBScore2'], 
+					  "Max" => round(64 - 23*($match[$matchNum]['LBScore1'] - $match[$matchNum]['LBScore2'])/($playerInput[0]['LBScore']-$playerInput[127]['LBScore'])),
+					  "pointsWon" => 0, "gamesWon" => array(0,0,0,0,0),"TBWon" => array(0,0,0,0,0),"sWon" => 0 ,"pRun" => 0,"pointsOnServe" => 0,"pointsOnServeWon" => 0,"gRun" => 0,"bptOpp" => 0, "bptsConverted" => 0,"hasAdv" => 0),
+	);
+	//print_r($contest);
+
+
+	//global $contest;
+	$server = 0; $receiver = 1;
+	$ptWinner = $ptLoser = 0;
+	$isBpt = $isDeuce = 0;
+
+	$currSet = 0;
+
+	//echo "<br><u>Serve:</u>  ".$contest[$server]['Name'] .": ";
+	while ($contest[$server]['sWon'] < 3 &&  $contest[$receiver]['sWon'] < 3) {
+
+		$contest[$server]['pointsOnServe']++;
+		$rndVal = rand() % 100;
+		$ptWinner = $rndVal < $contest[$server]['Max'] ? $server : $receiver;
+	    $ptLoser = $ptWinner == 0? 1 : 0;
+
+	   	if ($ptWinner == $server)
+ 			$contest[$server]['pointsOnServeWon']++;
+		$contest[$ptWinner]['pointsWon']++;
+		//echo $rndVal." : ".$contest[$server]['pointsWon'] . "-" .$contest[$receiver]['pointsWon'] ." ";
+
+		// 1. Break point at 40 
+		if ($contest[$receiver]['pointsWon'] == 3 && $contest[$server]['pointsWon'] < 3) {
+			$isBpt = 1;
+			$contest[$receiver]['bptOpp']++;
+			//echo "On breakpoint #".$contest[$receiver]['bptOpp']." ";
+		}
+		// 2. Deuce or Advantage 
+		else if (($contest[$ptWinner]['pointsWon'] + $contest[$ptLoser]['pointsWon'] >= 6) &&
+				 ($contest[$ptWinner]['pointsWon'] - $contest[$ptLoser]['pointsWon'] < 2)) {
+			// a.Deuce
+			if ($contest[$ptWinner]['pointsWon'] == $contest[$ptLoser]['pointsWon']) {
+			  //echo "Deuce; ";
+			  $isDeuce = 1; $isBpt = 0;
+			  $contest[$server]['hasAdv'] = $contest[$receiver]['hasAdv'] = 0;
+			}
+			// b.Advantage
+			else if ($contest[$ptWinner]['pointsWon'] - $contest[$ptLoser]['pointsWon'] == 1) {
+			  //echo "Advantage " . $contest[$ptWinner]['Name'] ." ";
+			  $contest[$ptWinner]['hasAdv'] = 1;
+			  $isDeuce = 0;
+			  if ($ptWinner == $receiver) {
+			  	$isBpt = 1;
+			  	$contest[$receiver]['bptOpp']++;
+				//echo "On Breakpoint #".$contest[$receiver]['bptOpp']." ";
+			  }
+			}
+		}
+		// 3. Game is Over 
+   		else if ($contest[$ptWinner]['pointsWon'] >=4 &&
+				($contest[$ptWinner]['pointsWon'] - $contest[$ptLoser]['pointsWon']) >= 2) {
+				  $contest[$ptWinner]['gamesWon'][$currSet]++;
+				  if ($ptWinner == $receiver) {
+					$contest[$receiver]['bptsConverted']++;
+					//echo "Converted ".$contest[$receiver]['bptsConverted']." of ".$contest[$receiver]['bptOpp']." ";
+				  }
+
+				  //echo "GAME ".$contest[$ptWinner]['Name']."! ".$contest[$server]['gamesWon'][$currSet]."-".$contest[$receiver]['gamesWon'][$currSet]." ";
+				  $temp = $server; $server = $receiver; $receiver = $temp;
+				  //echo "<br><u>Serve:</u> ".$contest[$server]['Name'] ." ";
+				  $contest[$server]['pointsWon'] = $contest[$receiver]['pointsWon'] = 0;
+				  $isBpt = $contest[$server]['hasAdv'] = $contest[$receiver]['hasAdv'] = 0;
+
+				  //Handle a.SetOver or b.TieBreak
+				  //a.SetOver
+				  if (($contest[$ptWinner]['gamesWon'][$currSet] >= 6) && ($contest[$ptWinner]['gamesWon'][$currSet] - $contest[$ptLoser]['gamesWon'][$currSet] >= 2)) {
+					  //echo "SET ".$contest[$ptWinner]['Name']."! ".$contest[$ptWinner]['gamesWon'][$currSet]."-".$contest[$ptLoser]['gamesWon'][$currSet]."<br>";
+					  $contest[$ptWinner]['sWon']++;
+
+					  //echo "<br>"; print_r($contest[0]); //echo "<br>"; print_r($contest[1]);//echo "<br>";
+
+
+					  if ($contest[$ptWinner]['sWon'] == 3) {
+						break;
+					  }
+					  else
+						$currSet++;
+				  }
+				  // b.Tie break
+				  else if ($contest[$ptWinner]['gamesWon'][$currSet] == 6 &&
+				  $contest[$ptLoser]['gamesWon'][$currSet] == 6 &&
+				  ($contest[$ptWinner]['sWon'] + $contest[$ptLoser]['sWon']) < 4) {
+						//echo "<br>IT'S A TIE BREAK!<br>";
+						$postTBserver = $server;
+
+				      while (1) {
+					  if (($contest[$ptWinner]['TBWon'][$currSet] + $contest[$ptLoser]['TBWon'][$currSet]) % 2) {
+						$temp = $server; $server = $receiver; $receiver = $temp;
+						//echo "<br><u>TBServe:</u> ".$contest[$server]['Name']." ";
+					  }
+					  $contest[$server]['pointsOnServe']++;
+					  $rndVal = rand() % 100;
+					  $ptWinner = $rndVal < $contest[$server]['Max'] ? $server : $receiver;
+					  $ptLoser = $ptWinner == 0? 1 : 0;
+
+					  if ($ptWinner == $server)
+ 						$contest[$server]['pointsOnServeWon']++;
+
+					  $contest[$ptWinner]['TBWon'][$currSet]++;
+					  //echo "TB Score: ".$contest[$ptWinner]['Name']." wins: ".$rndVal.":".$contest[$server]['TBWon'][$currSet]."-".$contest[$receiver]['TBWon'][$currSet]." ";
+					  if (($contest[$ptWinner]['TBWon'][$currSet] - $contest[$ptLoser]['TBWon'][$currSet] >= 2) &&
+						$contest[$ptWinner]['TBWon'][$currSet] >= 7)
+						  break; //TB over, continue match or stop
+					  } //TB play loop over
+					  $contest[$ptWinner]['sWon']++;
+					  $contest[$ptWinner]['gamesWon'][$currSet]++;
+
+					  if ($contest[$ptWinner]['sWon'] == 3)  {
+							  break;
+					  }
+					  else {
+						$currSet++;
+						$server = $postTBserver; $receiver = $server == 0? 1: 0;
+					  }
+				  } //end of TB elseif portion
+			} //end of 3.Game Over
+		}//End of match on loop.
+
+
+		if ($matchNum % 2 == 0) {
+			/*
+			$nextOpponent['Name'] = $contest[$ptWinner]['Name'];
+			$nextOpponent['Rank'] = $contest[$ptWinner]['Rank'];
+			$nextOpponent['LBScore'] = $contest[$ptWinner]['LBScore'];
+			*/
+			$match[$nextMatchIdx]['Player1'] = $contest[$ptWinner]['Name']; $match[$nextMatchIdx]['Rank1'] = $contest[$ptWinner]['Rank']; $match[$nextMatchIdx]['LBScore1'] = $contest[$ptWinner]['LBScore'];
+		}
+		else {
+			if ($contest[$ptWinner]['Rank'] < $match[$nextMatchIdx]['Rank1']) {
+				$temp = $match[$nextMatchIdx]['Player1']; $match[$nextMatchIdx]['Player1'] = $contest[$ptWinner]['Name']; $match[$nextMatchIdx]['Player2'] = $temp;
+				$temp = $match[$nextMatchIdx]['Rank1']; $match[$nextMatchIdx]['Rank1'] = $contest[$ptWinner]['Rank']; $match[$nextMatchIdx]['Rank2'] = $temp;
+				$temp = $match[$nextMatchIdx]['LBScore1']; $match[$nextMatchIdx]['LBScore1'] = $contest[$ptWinner]['LBScore']; $match[$nextMatchIdx]['LBScore2'] = $temp;
+			}
+			else {
+				$match[$nextMatchIdx]['Player2'] = $contest[$ptWinner]['Name']; $match[$nextMatchIdx]['Rank2'] = $contest[$ptWinner]['Rank']; $match[$nextMatchIdx]['LBScore2'] = $contest[$ptWinner]['LBScore'];
+			}
+			$nextMatchIdx++;
+		}
+
+		$result = $contest[$ptWinner]['Name']."(".$contest[$ptWinner]['Rank'].")<br>".$contest[$ptLoser]['Name']."(".$contest[$ptLoser]['Rank'].")<br>";
+		//echo $matchNum.": ".$contest[$ptWinner]['Name']."(".$contest[$ptWinner]['Rank'].") bt ".$contest[$ptLoser]['Name']."(".$contest[$ptLoser]['Rank'].") ";
+		for ($z = 0; $z <= $currSet; $z++)
+			$result = $result." ".$contest[$ptWinner]['gamesWon'][$z]."-".$contest[$ptLoser]['gamesWon'][$z];
+		$result = $result.";";
+		return $result;
+}
+
+?>
+------------------------------------------------------------------------------
+File : home.css
+------------------------------------------------------------------------------
+body { 
+	text-align: center; /* IE hack */
+}
+
+#main_wrapper {
+margin-top: auto;
+margin-bottom: auto;
+text-align: left; /* IE Hack */
+}
+
+body {
+margin: 0;
+padding: 0;
+}
+
+#header {
+height:25px;
+width:100%;
+position: fixed;
+z-index: 100;
+background-color: #feedd6;
+text-color: #ff0000;
+font-size:11px;
+}
+
+div#content {
+padding: 15px;
+background-color: #d8af79;
+text-color: #ff0000;
+font-size:12px;
+height: 100%;
+width: 100%;
+position:absolute;
+}
+
+#footer {
+height:15px;
+width:100%;
+position: fixed;
+background-color: #feedd6;
+text-color: #ff0000;
+font-size:11px;
+bottom: 0;
+}
+------------------------------------------------------------------------------
+File : home.php
+------------------------------------------------------------------------------
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="firstpage.css">
+</head>
+<body>
+
+<!----         ALL THE HEADER STARTS HERE ------------>
+
+<div id="header">
+		header	
+</div>
+
+<div id="content">
+<form action="tournament.php" method="post">
+<p>
+<p><p>
+<center>
+<table >
+
+<tr>
+<td><table>
+<tr><td><input type="radio" name="type" value="aus">Australian Open</input></td></tr>
+<tr><td><input type="radio" name="type" value="fre">French Open</input></td></tr>
+<tr><td><input type="radio" name="type" value="wim">Wimbledon</input></td></tr>
+<tr><td><input type="radio" name="type" value="uso">US Open</input></td></tr>
+</table></td>
+<td><table>
+<tr><td><input type="radio" name="decade" value="1990">1990s</input></td></tr>
+<tr><td><input type="radio" name="decade" value="2000">2000s</input></td></tr>
+<tr><td><input type="radio" name="decade" value="2010">2010s</input></td></tr>
+</table></td>
+<td><table>
+<tr><td><input type="radio" name="category" value="men">Men</input></td></tr>
+<tr><td><input type="radio" name="category" value="women">Women</input></td></tr>
+</table></td>
+</tr>
+
+</table>
+<p>
+<input type="submit" value="Go!" style="cursor:pointer;background:#35b128;-moz-border-radius: 10px;color:#f3f3f3;font-size:1.1em;">
+</center>
+</form>
+</div>
+
+<div id="footer">
+		footer
+</div>
+</body>
+</html>
+------------------------------------------------------------------------------
+File : tournament.css
+------------------------------------------------------------------------------
+	table.outerTable {
+		table-layout:fixed;
+		width:100%; 
+		height:100%;
+		border-collapse:collapse; 
+		border:#ffffff 1px solid;
+	}
+	
+	td.header { 
+		font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  font-size: 10px; text-transform:uppercase; color: #ffffff; width:100%; max-height:8%; padding:3px 5px; border:#ffffff 1px solid;
+	}
+	td.roundOne { 
+		border-collapse:collapse;font-weight:bold; font-family:Deja Vu Mono,tahoma,verdana,Sans serif; text-align:left;  font-size: 11px; text-transform:capitalize; color: #ffffff; max-width:12.5%; max-height:11.5%; padding:3px 5px; border:#ffffff 1px solid;
+	}
+	td.roundTwo { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height:120%; font-size: 13px; text-transform:uppercase; color: #ffffff; max-width: 12.5%; max-height: 23%;padding:3px 12px; border:#ffffff 1px solid;
+	}
+	td.roundThree { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height:130%; font-size: 19px; text-transform:uppercase; color: #ffffff; max-width: 25%; max-height: 23%;padding:3px 16px; border:#ffffff 1px solid;
+	}
+   	td.roundFour { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height:140%; font-size: 23px; text-transform:uppercase; color: #ffffff; max-width: 25%; max-height: 46%;padding:3px 24px; border:#ffffff 1px solid;
+	}
+    td.quarterFinal { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height:200% ;font-size: 26px; text-transform:uppercase; color: #ffffff; max-width: 50%; max-height: 46%;padding:3px 36px; border:#ffffff 1px solid;
+	}
+    td.semiFinal { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height:300%;font-size: 30px; text-transform:uppercase; color: #ffffff; max-width: 50%; max-height: 92%;padding:3px 40px; border:#ffffff 1px solid;
+	}
+    td.Final { 
+		border-collapse:collapse;font-weight:bold; font-family:Serif,tahoma,verdana,Sans serif; text-align:center;  line-height : 420%;  font-size: 40px; text-transform:uppercase; color: #ffffff; max-width: 100%; max-height: 92%;padding:3px 50px; border:#ffffff 1px solid;
+	}
+
+	.outerTable tr{
+		background: #04b404;
+		//background: #000000;
+	}
+	.outerTable td{
+		border-collapse:collapse;
+	}
+	/* Define the hover highlight color for the table row */
+    	.outerTable td:hover {
+       		background-color: #ff8000;
+       		//background-color: #000000;
+    }
+------------------------------------------------------------------------------
+File : tournament.js
+------------------------------------------------------------------------------
+var matchResult = new Array();	
+var matchIdx = 0;
+function display(cell) {
+    var refCell = document.getElementById(cell);
+    var content = refCell.innerHTML;
+    mainScreen.innerHTML = content;
+}
+    
+function addRowsAndCols(btnVal) {
+    var rowsToShow;
+    var idx=0;
+    var rounds = new Array("Round 1", "Round 2", "Round 3", "Round 4", "Quarterfinals", "Semifinals", "Final");
+   
+    for (var i = 0; i < rounds.length; i++) {
+        if (btnVal == rounds[i])
+        {    idx = i;break;}
+    }
+  
+    switch(btnVal) {
+        case "Round 1" : rowsToShow = 8; colsToShow = 8; tdClass = "roundOne"; break;
+        case "Round 2" : rowsToShow = 8; colsToShow = 4; tdClass = "roundTwo"; break;
+        case "Round 3" : rowsToShow = 4; colsToShow = 4; tdClass = "roundThree"; break;
+        case "Round 4" : rowsToShow = 4; colsToShow = 2; tdClass = "roundFour"; break;
+        case "Quarterfinals" : rowsToShow = 2; colsToShow = 2; tdClass = "quarterFinal"; break;
+        case "Semifinals" : rowsToShow = 2; colsToShow = 1; tdClass = "semiFinal"; break;
+        case "Final" : rowsToShow = 1; colsToShow = 1; tdClass = "Final"; break;
+    }    
+       
+    var table = document.getElementById("innertable");
+    var numRows = table.rows.length;
+    
+    for (rowIdx = 0; rowIdx < numRows; rowIdx++) {
+        table.deleteRow(0);
+    }
+    
+    for (rowIdx = 0; rowIdx < rowsToShow; rowIdx++) {
+        var row = table.insertRow(-1);
+        for (colIdx = 0; colIdx < colsToShow; colIdx++) {
+            var newCell = row.insertCell(-1);
+            newCell.innerHTML = matchResult[matchIdx++]; newCell.className = tdClass;
+        }
+    }
+
+    var refBtn = document.getElementById("uidBtn");
+    if (idx <= 5)
+        refBtn.value = rounds[++idx];
+}   
+------------------------------------------------------------------------------
+File : tournament.php
+------------------------------------------------------------------------------
+<html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="tournament.css">
+
+</head>
+<body bgcolor="#000000" onLoad="samfunc();">
+
+<?php 	
+	global $massResult;
+	include 'functions.php';
+
+	$dataFile=$_POST['category'][0]."-".$_POST['type'].$_POST['decade'].".data";
+
+	getNameWithRating();
+	makeFixtures();
+	for ($z = 0; $z < 127; $z++) {
+		$massResult = $massResult.playMatch($z);
+	}
+?>
+
+<table class="outerTable" id="outertable" height=100% width=100%>
+<tr> 
+	<thead>
+		<tr height=10%>
+			<th width=65%>Simulator</th>
+			<th width=35%>US Open</th>
+		</tr>
+	</thead>
+</tr>
+<tr width=100%> 
+    <td width=65%>
+        <table class="outerTable" id="innertable">
+
+        </table>
+    </td>
+    <td width=35%>
+        <table class="outerTable" id="mainScreen" >
+        <tr><td width=100% height=90% colspan=2>Main Screen</td></tr>
+        <tr><td width=100% height=10% colspan=2>
+			<center><input id="uidBtn" type=button width=100 value="Round 1" onClick="addRowsAndCols(this.value)"></input></center>
+			</td></tr>
+        </table>
+    </td>
+</tr>
+</table>
+<script type="text/javascript" src="tournament.js">
+</script>
+<script type="text/javascript"> 
+function samfunc() {
+var myvar = "<?php echo $massResult; ?>";  
+matchResult = myvar.split(";");
+}
+</script>
+
+
+</body>
+</html>
+------------------------------------------------------------------------------
+File : variables.php
+------------------------------------------------------------------------------
+<?php 					 /* VARIABLES */ 
+
+	$dataFile = "";
+	$match = array(array());
+	$playerInput = array(array());
+	$drawRow = array();
+	$nextOpponent = array();
+	$nextMatchIdx = 64;
+	$massResult = "";
+	$lineNumber = array( 				//Format: fromSeed, toSeed, LineNos in the draw sheet starting from 1.
+					3, 4, 33, 96, 
+					5, 8, 32, 64, 65, 97, 
+					9, 12, 17, 49, 80, 112, 
+					13, 16, 16, 48, 81, 113, 
+					17, 24, 9, 24, 41, 56, 73, 88, 105, 120, 
+					25, 32, 8, 25, 40, 57, 72, 89, 104, 121, 
+					33, 128, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 23, 26, 27, 28, 29, 30, 31, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 50, 51, 52, 
+						53, 54, 55, 58, 59, 60, 61, 62, 63, 66, 67, 68, 69, 70, 71, 74, 75, 76, 77, 78, 79, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 98, 99, 100, 101, 
+						102, 103, 106, 107, 108, 109, 110, 111, 114, 115, 116, 117, 118, 119, 122, 123, 124, 125, 126, 127);
+?>
+------------------------------------------------------------------------------
