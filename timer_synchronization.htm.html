@@ -1,0 +1,64 @@
+<html>
+<body onLoad ="main();">
+	
+		<table id=table1 border=1>
+			<tr>	<td>	</tr>
+		</table>
+		
+		<p>
+		
+		<table id=table2 border=1>
+			<tr>	<td>	</tr>
+		</table>
+		
+		<script>
+			var timer, count = 0, fin1 = 0;
+			
+			function Sleep(seconds) {
+
+				function sleep(ms) {
+					return new Promise(resolve => setTimeout(resolve, ms));
+				}
+
+				async function demo(timeGap) {
+					console.log("start");
+					await sleep(timeGap);
+					console.log("end");	#executes after timeGap milliSeconds
+				}
+				demo(seconds);
+			}
+		
+			function getRan(start, end) 	{
+				return start + Math.floor(Math.random() * end);
+			}
+		
+			function Do_Second_Object() {
+				timer = setInterval( function CallIt() { Changer("table2"); }, 500);
+			}
+		
+			function Do_Object(obj) {
+				
+				val = getRan(50,100);
+				ref = document.getElementById(obj).getElementsByTagName("tr")[0];
+				ref.getElementsByTagName("td")[0].innerHTML = val;
+				count++;
+				
+				if (count == 5) {
+					clearInterval(timer);
+					count = 0;
+					fin1 = 1;
+					if (obj == "table1")
+						Do_Second_Object();
+				}
+			}
+
+			function main() {
+				Sleep(5000);	# official version - not so great. 
+				
+				timer = setInterval( 
+							function CallIt() { Do_Object("table1"); }, 
+							500);
+				}
+		</script>
+</body>
+</html>
