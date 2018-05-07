@@ -60,7 +60,7 @@ var timer, ball_result;
 var rowBatter = document.getElementsByTagName("tr");
 var nameIdx, howoutIdx, rIdx, bIdx, FourIdx, SixIdx, SRIdx, totalIdx, RRIdx, totalIdx, extrasStrIdx;
 
-function getStartIndex(inn) {
+function getStartIndex(innings) {
 	return inn;
 }
 
@@ -86,16 +86,32 @@ function ClearVariableData(innings) {
 	}
 }
 
-function SendOpeners(inn){
+function InitializeCenterBoard(innings) {
+	for (colIdx = 7; colIdx <= 8; colIdx++) {
+		rowBatter[2].getElementsByTagName("td")[colIdx].innerHTML = 0; //CenterScore
+		rowBatter[6].getElementsByTagName("td")[colIdx].innerHTML = "0(0)";  			  //Center batter runs(balls)
+		rowBatter[8].getElementsByTagName("td")[colIdx].innerHTML = "0x4";   			  //Center Boundary Stats
+	}
+	
+	rowBatter[5].getElementsByTagName("td")[7].innerHTML = players[innings][0];  //Center Player Name
+	rowBatter[5].getElementsByTagName("td")[8].innerHTML = players[innings][1];  //Center Player Name
+	rowBatter[10].getElementsByTagName("td")[8].innerHTML = "target"; 		  //Center runs reqd
+	rowBatter[11].getElementsByTagName("td")[8].innerHTML = 300;   			  //Center deliveries left
+	rowBatter[12].getElementsByTagName("td")[6].innerHTML = 50;   			  //Center overs left
+	rowBatter[13].getElementsByTagName("td")[6].innerHTML = "tgt/50";   	  //Center regd RR
+}
+
+function SendOpeners(innings){
 	for (row = 1; row <=2; row++) {
-		colIndex = inn == 0 ? 0 : 9;
+		colIndex = innings == 0 ? 0 : 9;
 		
 		ChangeRowColor(rowBatter, row, colIndex, "#32ff7e");
-		rowBatter[row].getElementsByTagName("td")[colIndex].innerHTML = players[inn][row - 1]; 			
+		rowBatter[row].getElementsByTagName("td")[colIndex].innerHTML = players[innings][row - 1]; 			
 		rowBatter[row].getElementsByTagName("td")[colIndex+1].innerHTML = "batting";
 		for (j= colIndex + 2; j <= colIndex + 6; j++)
 			rowBatter[row].getElementsByTagName("td")[j].innerHTML = 0;
 	}
+	InitializeCenterBoard(innings);
 }
 
 function Initialize() {
@@ -108,9 +124,9 @@ function Initialize() {
 	ballCount = 0;
 }
 
-function SetIndexes(inn) {
+function SetIndexes(innings) {
 	nameIdx = 0; howoutIdx = 1; rIdx = 2; bIdx = 3; FourIdx = 4; SixIdx = 5; SRIdx = 6; totalIdx = 2; RRIdx = 4; extrasStrIdx=1;
-	if (inn == 1) {
+	if (innings == 1) {
 		nameIdx += 9; howoutIdx += 9; rIdx += 9; bIdx += 9; FourIdx += 9; SixIdx += 9; SRIdx += 9; totalIdx = 9; RRIdx = 11; extrasStrIdx=8;
 	}
 }
