@@ -1,4 +1,4 @@
-MSEC = 1500;
+MSEC = 10;
 
 
 var players = [	["Gilchrist", "Hayden", "Ponting", "Martyn", "Lehmann", "Symonds", "Bevan", "Warne", "Lee", "Gillespie", "McGrath"],
@@ -9,7 +9,7 @@ var total, wkts, overs, ballCount;
 var nLegBye, nWide, nNoball, strExtras;
 var timer, ball_result;
 var rowBatter = document.getElementsByTagName("tr");
-var nameIdx, howoutIdx, rIdx, bIdx, FourIdx, SixIdx, SRIdx, totalIdx, RRIdx, totalIdx, extrasStrIdx;
+var nameIdx, howoutIdx, rIdx, bIdx, FourIdx, SixIdx, SRIdx, valtotalIdx, RRIdx, totalIdx, extrasStrIdx;
 var target;
 var crazyFlag = 100;
 
@@ -69,6 +69,7 @@ function getMax(a, b) {
 
 function outcome()  {
 	/* see scoringshots.txt */
+	//return 3;
 	val = getRan(1, 300);
 	if (val <= 148)
 		return 0; 					//DOT
@@ -188,11 +189,22 @@ function UpdateTargetData() {
 	
 }
 
+function UpdateCenterBoard() {
+	
+}
+
 function BatterScores(innings) {
-    if (innings == 1 && (str == 3 || str == 7))
-	rowBatter[str].getElementsByTagName("td")[rIdx-2].innerHTML = parseInt(ball_result + parseInt(rowBatter[str].getElementsByTagName("td")[rIdx-2].innerHTML));
+	console.log("BatterScores");
+	
+	console.log(str);console.log(rIdx);
+	pull = rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML;
+	console.log(pull);
+	console.log("before : " +parseInt(rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML));
+	
+	if (innings == 1 && (str == 3 || str == 7))
+		rowBatter[str].getElementsByTagName("td")[rIdx-2].innerHTML = parseInt(ball_result + parseInt(rowBatter[str].getElementsByTagName("td")[rIdx-2].innerHTML));
     else
-	rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML = parseInt(ball_result + parseInt(rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML));
+		rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML = parseInt(ball_result + parseInt(rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML));
 
 	if (ball_result == 4)
 		rowBatter[str].getElementsByTagName("td")[FourIdx].innerHTML = parseInt(rowBatter[str].getElementsByTagName("td")[FourIdx].innerHTML) + 1;
@@ -200,15 +212,18 @@ function BatterScores(innings) {
 		console.log("damn index - " +str);
 		rowBatter[str].getElementsByTagName("td")[SixIdx].innerHTML = parseInt(rowBatter[str].getElementsByTagName("td")[SixIdx].innerHTML) + 1;
 	}
-
+	console.log("after : " +rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML);
+	
 	total += ball_result ;
-	rowBatter[13].getElementsByTagName("td")[totalIdx].innerHTML = total ; 
-	rowBatter[13].getElementsByTagName("td")[totalIdx-1].innerHTML = "for " +wkts + " wkts" ; 
+	console.log("total : " +total);
+	rowBatter[13].getElementsByTagName("td")[valTotalIdx].innerHTML = total ; 
+	rowBatter[13].getElementsByTagName("td")[valTotalIdx-1].innerHTML = "for " +wkts + " wkts" ; 
 }
 
 function UpdateFaced(innings) {
-
+	console.log("UpdateFaced");
 	ballCount++;
+	console.log("before : " +rowBatter[str].getElementsByTagName("td")[bIdx].innerHTML);
     if (innings == 1 && (str == 3 || str == 7)) {
 	    rowBatter[str].getElementsByTagName("td")[bIdx-2].innerHTML = parseInt(1 + parseInt(rowBatter[str].getElementsByTagName("td")[bIdx-2].innerHTML));
 	    sr = (100*parseFloat(rowBatter[str].getElementsByTagName("td")[rIdx-2].innerHTML)/rowBatter[str].getElementsByTagName("td")[bIdx-2].innerHTML).toFixed(2);
@@ -219,13 +234,16 @@ function UpdateFaced(innings) {
 	    sr = (100 * parseFloat(rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML)/rowBatter[str].getElementsByTagName("td")[bIdx].innerHTML).toFixed(2);
 	    rowBatter[str].getElementsByTagName("td")[SRIdx].innerHTML = sr;
     }
-	
+	console.log("after : " +rowBatter[str].getElementsByTagName("td")[bIdx].innerHTML);
 	strOvers = balls2overs(ballCount);
-	rowBatter[12].getElementsByTagName("td")[RRIdx].innerHTML = (6*parseFloat(total)/ballCount).toFixed(2) ;  //RUN RATE
-	rowBatter[13].getElementsByTagName("td")[RRIdx].innerHTML = strOvers ;	//same Idx as RR, dont panic	  //OVERS
+	rowBatter[12].getElementsByTagName("td")[valRRIdx].innerHTML = (6*parseFloat(total)/ballCount).toFixed(2) ;  //RUN RATE
+	rowBatter[13].getElementsByTagName("td")[valOversIdx].innerHTML = strOvers ;	//same Idx as RR, dont panic	  //OVERS
+	
+	UpdateCenterBoard(innings);
 }
 
 function HandleExtras()	{
+	
 	ball_result == 8? nLegBye++ : nWide++;
 	total++;
 
@@ -237,14 +255,16 @@ function HandleExtras()	{
 		else
 			strExtras = "w-" + nWide ;
 				
-	rowBatter[12].getElementsByTagName("td")[extrasStrIdx].innerHTML = strExtras ;
-	rowBatter[13].getElementsByTagName("td")[totalIdx].innerHTML = total ;		
-	rowBatter[12].getElementsByTagName("td")[totalIdx].innerHTML = nLegBye + nWide ; 
+	rowBatter[12].getElementsByTagName("td")[strExtrasIdx].innerHTML = strExtras ;
+	rowBatter[12].getElementsByTagName("td")[valExtrasIdx].innerHTML = nWide + nLegBye ;
+	rowBatter[13].getElementsByTagName("td")[valTotalIdx].innerHTML = total ;		
 }
 
 function WicketFallen(innings) {
+	console.log("WicketFallen");
+	console.log(innings);
 	//ChangeRowColor(rowBatter, str, howoutIdx, "#ffff00");
-
+	
 	if (str == 3) {
 		console.log("WF - we got our man");
 	}
@@ -264,24 +284,29 @@ function WicketFallen(innings) {
 		min = max == str ? nstr : str;
 		
 		
-		//ChangeRowColor(rowBatter, str, howoutIdx, "#32ff7e");
+		/* ChangeRowColor(rowBatter, str, howoutIdx, "#32ff7e");*/
 		if (innings == 1 && (str == 3 || str == 7)) {
             rowBatter[str].getElementsByTagName("td")[nameIdx-2].innerHTML = players[innings][str-1]; 
             rowBatter[str].getElementsByTagName("td")[howoutIdx-2].innerHTML = "batting"; 
 		}
         else {
+			
             rowBatter[str].getElementsByTagName("td")[nameIdx].innerHTML = players[innings][str-1]; 
             rowBatter[str].getElementsByTagName("td")[howoutIdx].innerHTML = "batting"; 
         }
-		//console.log("WF - innings - nameIdx - howoutIdx :" +innings +nameIdx +howoutIdx);
-		//console.log(rowBatter[str].getElementsByTagName("td")[nameIdx].innerHTML);
+		
+		console.log("FUCK THIS");
+		console.log("WF - innings - nameIdx - howoutIdx :" +innings +nameIdx +howoutIdx);
+		console.log(rowBatter[str].getElementsByTagName("td")[nameIdx].innerHTML);
 		
 						
 		for (j = rIdx ; j <= SRIdx ; j++) {
+			console.log("hit it?");
 			if (innings == 1 && (str == 3 || str == 7))
 				rowBatter[str].getElementsByTagName("td")[j-2].innerHTML = 0 ;
 			else
 				rowBatter[str].getElementsByTagName("td")[j].innerHTML = 0 ;
+			console.log("initnew --" + str + " "  + j);
 		}
 	}
 }
@@ -312,7 +337,7 @@ function main() {
 	console.log("main");
 	WipeScoreboard();
 	SetupInnings(0);
-	StartInnings();
+	StartInnings(0);
 	/*
 	timer = setInterval( 
 				function CallIt() { PlaySequence(0); }, 
@@ -322,20 +347,23 @@ function main() {
 
 function StartInnings(innings) {
     function FaceDelivery() {
+		
         ball_result = outcome(); 
 
         if (ball_result <= 6) 
             BatterScores(innings);
-
+	
         if (ball_result < 9)      //All legal outcomes
 			UpdateFaced(innings);
 		
 		if (ball_result > 7) 
 			HandleExtras();
 
-        if (ball_result == 7)    //WICKET
+        if (ball_result == 7) {   //WICKET{
+		
 			WicketFallen(innings);
-   
+		}
+			
 		/* CENTERBOARD 
 		for (j = 7; j <= 8; j++) {
 			var idx = (j == 7)? min : max;
@@ -347,14 +375,14 @@ function StartInnings(innings) {
 		}
 		*/
 				
-		if (ballCount == 10 || wkts == 10) {
+		if (ballCount == 300 || wkts == 10) {
 			console.log("1st inn over - innings is " +innings); 
 			clearInterval(timer);
 
 			if (crazyFlag != 232) { 
 				crazyFlag = 232;
 				SetupInnings(1);
-				StartInnings();
+				StartInnings(1);
 			}
 		}
 				
