@@ -1,4 +1,4 @@
-MSEC = 100;
+MSEC = 10;
 
 var players = [	["Gilchrist", "Hayden", "Ponting", "Martyn", "Lehmann", "Symonds", "Bevan", "Warne", "Lee", "Gillespie", "McGrath"],
 				["Sehwag", "Tendulkar", "Ganguly", "Dravid", "Laxman", "Yuvraj", "Dhoni", "Kumble", "Srinath", "Zaheer", "Harbhajan"]	];
@@ -210,10 +210,10 @@ function BatterScores(innings) {
     rowBatter[8].getElementsByTagName("td")[Boundaries1_Idx].innerHTML = "0x4";
     rowBatter[8].getElementsByTagName("td")[Boundaries2_Idx].innerHTML = "0x4";
 
-	if (ball_result == 4)
+	if (ball_result == 4) {
 		rowBatter[str].getElementsByTagName("td")[FourIdx].innerHTML = parseInt(rowBatter[str].getElementsByTagName("td")[FourIdx].innerHTML) + 1;
+	}
 	if (ball_result == 6) {
-		console.log("damn index - " +str);
 		rowBatter[str].getElementsByTagName("td")[SixIdx].innerHTML = parseInt(rowBatter[str].getElementsByTagName("td")[SixIdx].innerHTML) + 1;
 	}
 	console.log("after : " +rowBatter[str].getElementsByTagName("td")[rIdx].innerHTML);
@@ -285,39 +285,28 @@ function WicketFallen(innings) {
 	    rowBatter[str].getElementsByTagName("td")[howoutIdx].innerHTML = "OUT"; 
 	wkts++;
 
-	if (wkts == 10)
+	if (wkts == 10 || ballCount == 300)
 		rowBatter[13].getElementsByTagName("td")[howoutIdx].innerHTML = "all out" ; 
 	else  {
-		if (str == max)
+		if (str == max) {
+			rowBatter[5].getElementsByTagName("td")[ctrPlayer2_Idx].innerHTML = players[innings][max]; 
+			rowBatter[6].getElementsByTagName("td")[ctrRuns2_Idx].innerHTML = "0(0)";
+			rowBatter[8].getElementsByTagName("td")[Boundaries2_Idx].innerHTML = "0x4";
+        }
+		
+		if (str == min) {
+			rowBatter[5].getElementsByTagName("td")[ctrPlayer1_Idx].innerHTML = rowBatter[5].getElementsByTagName("td")[ctrPlayer2_Idx].innerHTML;
+			rowBatter[6].getElementsByTagName("td")[ctrRuns1_Idx].innerHTML = rowBatter[6].getElementsByTagName("td")[ctrRuns2_Idx].innerHTML ;
+			rowBatter[8].getElementsByTagName("td")[Boundaries1_Idx].innerHTML = rowBatter[8].getElementsByTagName("td")[Boundaries2_Idx].innerHTML ; 
+
+			rowBatter[5].getElementsByTagName("td")[ctrPlayer2_Idx].innerHTML = players[innings][max]; 
+			rowBatter[6].getElementsByTagName("td")[ctrRuns2_Idx].innerHTML = "0(0)";
+			rowBatter[8].getElementsByTagName("td")[Boundaries2_Idx].innerHTML = "0x4";
+        }
 			
 		str = max + 1; 
 		max = str;
 		min = nstr;
-		
-		
-	
-		if str == min, new str goes to ctr1
-			rowBatter[6].getElementsByTagName("td")[ctrPlayer1_Idx].innerHTML = players[innings][str]; 
-			rowBatter[7].getElementsByTagName("td")[ctrRuns1_Idx].innerHTML = "0(0)";
-			rowBatter[8].getElementsByTagName("td")[Boundaries1_Idx].innerHTML = "0x4";
-		
-		if str == max, new str goes to ctr2, nonstr goes to ctr1
-			rowBatter[6].getElementsByTagName("td")[ctrPlayer2_Idx].innerHTML = players[innings][str]; 
-			rowBatter[7].getElementsByTagName("td")[ctrRuns2_Idx].innerHTML = "0(0)";
-			rowBatter[8].getElementsByTagName("td")[Boundaries2_Idx].innerHTML = "0x4";
-			
-			rowBatter[6].getElementsByTagName("td")[ctrPlayer1_Idx].innerHTML = players[innings][nonstr-1]; 
-		
-		
-		
-		
-		rowBatter[str+1].getElementsByTagName("td")[ctrPlayer2_Idx].innerHTML = players[innings][str]; 
-		
-		
-		ctrPlayer1_Idx = 7; ctrPlayer2_Idx = 8;	ctrRuns1_Idx = 7; 	ctrRuns2_Idx = 8;
-		Boundaries1_Idx = 7; Boundaries2_Idx = 8;
-		
-		
 		
 		/* ChangeRowColor(rowBatter, str, howoutIdx, "#32ff7e");*/
 		if (innings == 1 && (str == 3 || str == 7)) {
@@ -330,11 +319,6 @@ function WicketFallen(innings) {
             rowBatter[str].getElementsByTagName("td")[howoutIdx].innerHTML = "batting"; 
         }
 		
-		
-		console.log("WF - innings - nameIdx - howoutIdx :" +innings +nameIdx +howoutIdx);
-		console.log(rowBatter[str].getElementsByTagName("td")[nameIdx].innerHTML);
-		
-						
 		for (j = rIdx ; j <= SRIdx ; j++) {
 			console.log("hit it?");
 			if (innings == 1 && (str == 3 || str == 7))
@@ -399,19 +383,16 @@ function StartInnings(innings) {
 			WicketFallen(innings);
 		}
 			
-		/* CENTERBOARD 
-		for (j = 7; j <= 8; j++) {
-			var idx = (j == 7)? min : max;
-			rowBatter[5].getElementsByTagName("td")[j].innerHTML = rowBatter[idx].getElementsByTagName("td")[0].innerHTML;
-			rowBatter[6].getElementsByTagName("td")[j].innerHTML = rowBatter[idx].getElementsByTagName("td")[2].value + "(" +	
-											rowBatter[idx].getElementsByTagName("td")[3].value + ")" ;
-			rowBatter[8].getElementsByTagName("td")[j].innerHTML = rowBatter[idx].getElementsByTagName("td")[4].value + "x4 " +	
-											rowBatter[idx].getElementsByTagName("td")[6].value + "x6";
+		rowBatter[11].getElementsByTagName("td")[nballsLeftIdx].innerHTML = 300-ballCount;			/* CENTERBOARD */
+		rowBatter[12].getElementsByTagName("td")[noverLeftIdx].innerHTML = balls2overs(300-ballCount);
+		if (innings == 1) {
+			rowBatter[10].getElementsByTagName("td")[nReqdIdx].innerHTML = target-total;
+			rowBatter[13].getElementsByTagName("td")[nReqRateIdx].innerHTML = 6*parseFloat(target-total)/(300-ballCount).toFixed(2);
 		}
-		*/
 				
 		if (ballCount == 300 || wkts == 10) {
 			console.log("1st inn over - innings is " +innings); 
+			target = total+1;
 			clearInterval(timer);
 
 			if (crazyFlag != 232) { 
